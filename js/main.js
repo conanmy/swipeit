@@ -8,6 +8,9 @@ import DataBus from './databus'
 let ctx = canvas.getContext('2d')
 let databus = new DataBus()
 
+var NUM_BUBBLES = 3;
+var FRICTION_VELOCITY = 0.01;
+
 /**
  * 游戏主函数
  */
@@ -42,18 +45,6 @@ export default class Main {
       this.bindLoop,
       canvas
     )
-  }
-
-  /**
-   * 随着帧数变化的敌机生成逻辑
-   * 帧数取模定义成生成的频率
-   */
-  enemyGenerate() {
-    if (databus.frame % 30 === 0) {
-      let enemy = databus.pool.getItemByClass('enemy', Enemy)
-      enemy.init(6)
-      databus.enemys.push(enemy)
-    }
   }
 
   // 全局碰撞检测
@@ -152,8 +143,6 @@ export default class Main {
       .forEach((item) => {
         item.update()
       })
-
-    this.enemyGenerate()
 
     this.collisionDetection()
 

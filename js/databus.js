@@ -20,33 +20,20 @@ export default class DataBus {
   reset() {
     this.frame      = 0
     this.score      = 0
-    this.bullets    = []
-    this.enemys     = []
+    this.balls    = []
     this.animations = []
     this.gameOver   = false
-  }
-
-  /**
-   * 回收敌人，进入对象池
-   * 此后不进入帧循环
-   */
-  removeEnemey(enemy) {
-    let temp = this.enemys.shift()
-
-    temp.visible = false
-
-    this.pool.recover('enemy', enemy)
   }
 
   /**
    * 回收子弹，进入对象池
    * 此后不进入帧循环
    */
-  removeBullets(bullet) {
-    let temp = this.bullets.shift()
+  removeBalls(ball) {
+    let temp = this.balls.shift()
 
     temp.visible = false
 
-    this.pool.recover('bullet', bullet)
+    this.pool.recover('ball', ball)
   }
 }
