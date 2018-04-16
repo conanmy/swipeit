@@ -51,31 +51,10 @@ export default class Main {
   collisionDetection() {
     let that = this
 
-    databus.bullets.forEach((bullet) => {
-      for (let i = 0, il = databus.enemys.length; i < il; i++) {
-        let enemy = databus.enemys[i]
+    databus.balls.forEach((bullet) => {
 
-        if (!enemy.isPlaying && enemy.isCollideWith(bullet)) {
-          enemy.playAnimation()
-          that.music.playExplosion()
-
-          bullet.visible = false
-          databus.score += 1
-
-          break
-        }
-      }
     })
 
-    for (let i = 0, il = databus.enemys.length; i < il; i++) {
-      let enemy = databus.enemys[i]
-
-      if (this.player.isCollideWith(enemy)) {
-        databus.gameOver = true
-
-        break
-      }
-    }
   }
 
   // 游戏结束后的触摸事件处理逻辑
@@ -103,19 +82,18 @@ export default class Main {
 
     this.bg.render(ctx)
 
-    databus.bullets
-      .concat(databus.enemys)
+    databus.balls
       .forEach((item) => {
         item.drawToCanvas(ctx)
       })
 
     this.player.drawToCanvas(ctx)
 
-    databus.animations.forEach((ani) => {
-      if (ani.isPlaying) {
-        ani.aniRender(ctx)
-      }
-    })
+    // databus.animations.forEach((ani) => {
+    //   if (ani.isPlaying) {
+    //     ani.aniRender(ctx)
+    //   }
+    // })
 
     this.gameinfo.renderGameScore(ctx, databus.score)
 
@@ -136,20 +114,12 @@ export default class Main {
     if (databus.gameOver)
       return;
 
-    this.bg.update()
-
-    databus.bullets
-      .concat(databus.enemys)
+    databus.balls
       .forEach((item) => {
         item.update()
       })
 
     this.collisionDetection()
-
-    if (databus.frame % 20 === 0) {
-      this.player.shoot()
-      this.music.playShoot()
-    }
   }
 
   // 实现游戏帧循环

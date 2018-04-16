@@ -3,9 +3,6 @@ import Sprite from '../base/sprite'
 const screenWidth  = window.innerWidth
 const screenHeight = window.innerHeight
 
-const BG_IMG_SRC   = 'images/bg.jpg'
-const BG_WIDTH     = 512
-const BG_HEIGHT    = 512
 
 /**
  * 游戏背景类
@@ -13,18 +10,9 @@ const BG_HEIGHT    = 512
  */
 export default class BackGround {
   constructor(ctx) {
-    super(BG_IMG_SRC, BG_WIDTH, BG_HEIGHT)
 
     this.render(ctx)
 
-    this.top = 0
-  }
-
-  update() {
-    this.top += 2
-
-    if ( this.top >= screenHeight )
-      this.top = 0
   }
 
   /**
@@ -34,28 +22,12 @@ export default class BackGround {
    * 第二张补全除了top高度之外的部分，其余的隐藏在屏幕下面
    */
   render(ctx) {
-    ctx.drawImage(
-      this.img,
-      0,
-      0,
-      this.width,
-      this.height,
-      0,
-      -screenHeight + this.top,
-      screenWidth,
-      screenHeight
-    )
-
-    ctx.drawImage(
-      this.img,
-      0,
-      0,
-      this.width,
-      this.height,
-      0,
-      this.top,
-      screenWidth,
-      screenHeight
-    )
+    var holes = [[0, 0], [0, screenHeight], [screenWidth, 0], [screenWidth, screenHeight]];
+    for (var i = 0; i < holes.length; i++) {
+      ctx.beginPath();
+      ctx.arc(holes[i][0], holes[i][1], 80, 0, 2 * Math.PI);
+      ctx.fillStyle = '#008000';
+      ctx.fill();
+    }
   }
 }
