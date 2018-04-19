@@ -1,15 +1,14 @@
-import Player from './player/index'
-import Enemy from './npc/enemy'
+import Ball from './ball'
 import BackGround from './runtime/background'
 import GameInfo from './runtime/gameinfo'
 import Music from './runtime/music'
 import DataBus from './databus'
+import ZingTouch from './libs/zingtouch';
 
 let ctx = canvas.getContext('2d')
 let databus = new DataBus()
 
-var NUM_BUBBLES = 3;
-var FRICTION_VELOCITY = 0.01;
+var BALL_NUM = 3;
 
 /**
  * 游戏主函数
@@ -31,9 +30,12 @@ export default class Main {
     )
 
     this.bg = new BackGround(ctx)
-    this.player = new Player(ctx)
     this.gameinfo = new GameInfo()
     this.music = new Music()
+    for (var i = 0; i < BALL_NUM; i++) {
+      var ball = new Ball((i == BALL_NUM - 1) ? true : false);
+      databus.balls.push(ball);
+    }
 
     this.bindLoop = this.loop.bind(this)
     this.hasEventBind = false
@@ -51,9 +53,26 @@ export default class Main {
   collisionDetection() {
     let that = this
 
-    databus.balls.forEach((bullet) => {
+    let balls = databus.balls;
 
-    })
+    for (var i = 0; i < balls.length; i++) {
+      for (var j = i + 1; j < balls.length; j++) {
+        if (balls[i].vx > 0 || balls[i].vy > 0 || balls[j].vx > 0 || balls[j].vy > 0) {
+          if (Math.pow(balls[i].x - balls[j].x, 2) + Math.pow(balls[i].y - balls[j].y, 2) <= Math.pow(balls[i].radius + balls[j].radius, 2)) {
+            var ix = balls[i].x, iy = balls[i].y, jx = balls[j].x, jy = balls[j].y;
+            var ivx = balls[i].vx, ivy = balls[i].vy, jvx = balls[j].vx, jvy = balls[j].vy;
+            var d = Math.sqrt(Math.pow(ix - jx, 2) + Math.pow(iy - jy, 2));
+            var nx = (jx - ix) / d;
+            var ny = (jy - iy) / d;
+            var p = ivx * nx + ivy * ny - jvx * nx - jvy * ny;
+            balls[i].vx = ivx - p * nx;
+            balls[i].vy = ivy - p * ny;
+            balls[j].vx = jvx + p * nx;
+            balls[j].vy = jvy + p * ny;
+          }
+        }
+      }
+    }
 
   }
 
@@ -81,13 +100,11 @@ export default class Main {
     ctx.clearRect(0, 0, canvas.width, canvas.height)
 
     this.bg.render(ctx)
-
+    
     databus.balls
-      .forEach((item) => {
-        item.drawToCanvas(ctx)
+      .forEach((item, key) => {
+        item.render(ctx, key)
       })
-
-    this.player.drawToCanvas(ctx)
 
     // databus.animations.forEach((ani) => {
     //   if (ani.isPlaying) {
